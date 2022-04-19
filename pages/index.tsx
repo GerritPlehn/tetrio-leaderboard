@@ -1,10 +1,18 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import useSWR, { Key, Fetcher } from 'swr'
-
+import Leaderboard from '../components/leaderboard'
+import ScoreSubmission from '../components/scoreSubmission'
+import ReplayInfo from '../components/replayInfo'
+import { useState } from 'react'
+import { Replay } from '../types/replay'
 const Home: NextPage = () => {
-  const { data, error } = useSWR(uid, fetcher)
+  const [replayDetail, setReplayDetail] = useState<
+    Replay.RootObject | undefined
+  >()
+  const replayInfoExchanger = (replayDetail: Replay.RootObject) => {
+    setReplayDetail(replayDetail)
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -15,49 +23,27 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main className={styles.main}>
+      <header className={styles.header}>
         <h1 className={styles.title}>Masters of the falling Bloks</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Level</th>
-              <th>Name</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((leaderboardEntry, index) => (
-              <tr key={leaderboardEntry.seed}>
-                <td>{index + 1}</td>
-                <td>{leaderboardEntry.level}</td>
-                <td>{leaderboardEntry.name}</td>
-                <td>{leaderboardEntry.score}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <p>
+          Compete against others for glory and prizes! Show the world, why we
+          are StoryBLOK!
+        </p>
+      </header>
+      <main className={styles.main}>
+        <div className={styles.leaderboard}>
+          <Leaderboard replayInfoExchanger={replayInfoExchanger} />
+        </div>
+        <div className={styles.replayDetail}>
+          {replayDetail && <ReplayInfo replay={replayDetail} />}
+        </div>
       </main>
+      <div className={styles.scoreSubmission}>
+        <h2>Submit your own score</h2>
+        <ScoreSubmission replayInfoExchanger={replayInfoExchanger} />
+      </div>
     </div>
   )
-}
-
-const uid: Key =
-  'https://dfvqarmcqpkvgykzcglz.supabase.co/rest/v1/scores?select=replay->endcontext->seed,name,replay->endcontext->score,replay->endcontext->level&order=replay->endcontext->score.desc&offset=0&limit=10'
-const fetcher: Fetcher<LeaderboardEntry[], string> = (url) =>
-  fetch(url, {
-    headers: {
-      apikey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmdnFhcm1jcXBrdmd5a3pjZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDk5NjI5ODgsImV4cCI6MTk2NTUzODk4OH0.9OUfiM-bMeuIOVqSsSpz6U0mdiF2XpsLhXtj1k5WJw0',
-    },
-  }).then((res) => res.json())
-
-interface LeaderboardEntry {
-  seed: string
-  level: number
-  name: string
-  score: number
 }
 
 export default Home

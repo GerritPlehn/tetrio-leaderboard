@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.header {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.main {
+  display: flex;
+  flex-flow: row;
+}
+
+.leaderboard {
+  flex: 1 200px;
+  padding-right: 50px;
+}
+
+.replayDetail {
+  flex: 2 400px;
+}
+
+.scoreSubmission {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 40px;
+}
