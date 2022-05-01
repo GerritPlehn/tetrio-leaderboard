@@ -1,5 +1,9 @@
+import { Input, Button, Upload, message } from 'antd'
+import { UserOutlined, InboxOutlined } from '@ant-design/icons'
 import { FormEvent, useState } from 'react'
 import { Replay } from '../types/replay'
+import { DraggerProps } from 'antd/lib/upload'
+const { Dragger } = Upload
 
 let uploadReplay: Replay.RootObject
 const setUploadScore = (replay: Replay.RootObject) => {
@@ -38,39 +42,62 @@ export default function ScoreSubmission({
     const response = await fetch(endpoint, options)
     // await response.json()
   }
-
-  const handleScore = (e: FormEvent<HTMLInputElement>) => {
-    const fileReader = new FileReader()
-    const files = (e.target as HTMLInputElement).files
-    if (!files) {
-      console.error('no file')
-      return
-    }
-    fileReader.readAsText(files[0], 'UTF-8')
-    fileReader.onload = (e) => {
-      const jsonString = e.target?.result?.toString()
-      const score = jsonString ? JSON.parse(jsonString) : undefined
-      setUploadScore(score)
-      replayInfoExchanger(uploadReplay)
-    }
+  const props: DraggerProps = {
+    name: 'file',
+    multiple: false,
+    maxCount: 1,
+    beforeUpload: (file) => {
+      const fileReader = new FileReader()
+      fileReader.readAsText(file, 'UTF-8')
+      fileReader.onload = (e) => {
+        const jsonString = e.target?.result?.toString()
+        const score = jsonString ? JSON.parse(jsonString) : undefined
+        setUploadScore(score)
+        replayInfoExchanger(uploadReplay)
+        console.log(score)
+      }
+      return false
+    },
+    onChange(info) {
+      const { status } = info.file
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList)
+      }
+      if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`)
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`)
+      }
+    },
+    onDrop(e) {
+      console.log('Dropped files', e.dataTransfer.files)
+    },
   }
-
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="name">Name</label>
-      <input type="text" id="name" name="name" required />
-
-      <label htmlFor="uploadReplay">Replay</label>
-      <input
-        type="file"
-        id="uploadReplay"
-        name="uploadReplay"
-        onChange={handleScore}
-        required
-      />
-
-      <button type="submit">Submit</button>
-    </form>
+    <div>
+      <h2>Submit your own score</h2>
+      <form onSubmit={handleSubmit}>
+        <Input
+          placeholder="Name"
+          prefix={<UserOutlined />}
+          name="name"
+          id="name"
+          addonAfter="@storyblok.com"
+          required
+        />
+        <Dragger {...props}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag file to this area to upload
+          </p>
+        </Dragger>
+        <Button type="primary" size="large" htmlType="submit">
+          Submit Score
+        </Button>
+      </form>
+    </div>
   )
 }
 

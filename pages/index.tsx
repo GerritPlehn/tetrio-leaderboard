@@ -1,11 +1,15 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 import Leaderboard from '../components/leaderboard'
 import ScoreSubmission from '../components/scoreSubmission'
 import ReplayInfo from '../components/replayInfo'
-import { useState } from 'react'
+import { CSSProperties, useState } from 'react'
 import { Replay } from '../types/replay'
+
+import { Layout } from 'antd'
+import Rules from '../components/rules'
+const { Content, Header } = Layout
+
 const Home: NextPage = () => {
   const [replayDetail, setReplayDetail] = useState<
     Replay.RootObject | undefined
@@ -14,7 +18,7 @@ const Home: NextPage = () => {
     setReplayDetail(replayDetail)
   }
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Tetrio Leaderboard</title>
         <meta
@@ -23,27 +27,50 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Masters of the falling Bloks</h1>
-        <p>
-          Compete against others for glory and prizes! Show the world, why we
-          are StoryBLOK!
-        </p>
-      </header>
-      <main className={styles.main}>
-        <div className={styles.leaderboard}>
-          <Leaderboard replayInfoExchanger={replayInfoExchanger} />
-        </div>
-        <div className={styles.replayDetail}>
-          {replayDetail && <ReplayInfo replay={replayDetail} />}
-        </div>
-      </main>
-      <div className={styles.scoreSubmission}>
-        <h2>Submit your own score</h2>
-        <ScoreSubmission replayInfoExchanger={replayInfoExchanger} />
-      </div>
+      <Layout>
+        <Header>
+          <h1 style={{ color: 'white' }}>Storyblok Tetris Tournament</h1>
+        </Header>
+        <Content style={styles.main}>
+          <div style={styles.row}>
+            <div style={styles.block}>
+              <Leaderboard replayInfoExchanger={replayInfoExchanger} />
+            </div>
+            {replayDetail && (
+              <div style={styles.block}>
+                <ReplayInfo replay={replayDetail} />
+              </div>
+            )}
+          </div>
+          <div style={styles.row}>
+            <div style={styles.block}>
+              <Rules></Rules>
+            </div>
+            <div style={styles.block}>
+              <ScoreSubmission replayInfoExchanger={replayInfoExchanger} />
+            </div>
+          </div>
+        </Content>
+      </Layout>
     </div>
   )
+}
+
+const styles: { [className: string]: CSSProperties } = {
+  main: {
+    padding: '12px 12px',
+  },
+  row: {
+    display: 'flex',
+    flexFlow: 'row',
+    flexWrap: 'wrap',
+  },
+  block: {
+    background: 'white',
+    margin: '12px 0 0 12px',
+    padding: '12px',
+    flex: '350px',
+  },
 }
 
 export default Home

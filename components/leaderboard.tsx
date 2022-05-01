@@ -3,50 +3,80 @@ import React, { useState } from 'react'
 import LeaderboardEntry from '../types/leaderboardEntry'
 import Score from '../types/score'
 import { Replay } from '../types/replay'
-const pageSize = 10
+
+import { Table, TablePaginationConfig } from 'antd'
+import { ColumnsType } from 'antd/lib/table'
+
+let pageSize = 10
+
+let totalScores = pageSize
 
 function Page({
   pageIndex,
+  setPageIndex,
   replayInfoExchanger,
 }: {
   pageIndex: number
+  setPageIndex: React.Dispatch<React.SetStateAction<number>>
   replayInfoExchanger: (replayDetail: Replay.RootObject) => void
 }): JSX.Element {
-  const { data, error } = useSWR(`/api/scores?page=${pageIndex}`, entryFetcher)
+  let { data, error } = useSWR(`/api/scores?page=${pageIndex}`, entryFetcher)
 
-  if (error || !data?.length) {
-    return <div>No more scores</div>
+  const columns: ColumnsType<LeaderboardEntry> = [
+    {
+      title: 'Rank',
+      key: 'rank',
+      render: (value, record, index) => {
+        return pageIndex * pageSize + index + 1
+      },
+      width: 64
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      ellipsis: true,
+    },
+    {
+      title: 'Level',
+      dataIndex: 'level',
+      width: 64
+    },
+    {
+      title: 'Score',
+      dataIndex: 'score',
+      width: 128
+    },
+  ]
+  const pagination: TablePaginationConfig = {
+    total: totalScores,
+    pageSize,
+    onChange: (page, newPageSize) => {
+      pageSize = newPageSize
+      pageIndex = page
+      setPageIndex(page - 1)
+    },
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Level</th>
-          <th>Name</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((leaderboardEntry, index) => (
-          <tr
-            key={leaderboardEntry.id}
-            onClick={async () => {
+    <div>
+      <h2>Leaderboard</h2>
+      <Table
+        dataSource={data}
+        rowKey="id"
+        columns={columns}
+        pagination={pagination}
+        onRow={(data) => {
+          return {
+            onClick: async (event) => {
               const score = await detailFetcher(
-                `/api/scores/${leaderboardEntry.id.toString()}`
+                `/api/scores/${data.id.toString()}`
               )
               replayInfoExchanger(score.replay)
-            }}
-          >
-            <td>{pageIndex * pageSize + index + 1}</td>
-            <td>{leaderboardEntry.level}</td>
-            <td>{leaderboardEntry.name}</td>
-            <td>{leaderboardEntry.score}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+            }
+          }
+        }}
+      ></Table>
+    </div>
   )
 }
 
@@ -58,21 +88,18 @@ export default function Leaderboard({
   const [pageIndex, setPageIndex] = useState(0)
   return (
     <div>
-      <Page pageIndex={pageIndex} replayInfoExchanger={replayInfoExchanger} />
+      <Page
+        pageIndex={pageIndex}
+        setPageIndex={setPageIndex}
+        replayInfoExchanger={replayInfoExchanger}
+      />
       <div id="nextPage" style={{ display: 'none' }}>
         <Page
           pageIndex={pageIndex + 1}
+          setPageIndex={setPageIndex}
           replayInfoExchanger={replayInfoExchanger}
         />
       </div>
-
-      <button
-        onClick={() => setPageIndex(pageIndex - 1)}
-        disabled={pageIndex == 0 ? true : false}
-      >
-        Previous
-      </button>
-      <button onClick={() => setPageIndex(pageIndex + 1)}>Next</button>
     </div>
   )
 }
@@ -80,6 +107,8 @@ export default function Leaderboard({
 const entryFetcher: Fetcher<LeaderboardEntry[], string> = (url) =>
   fetch(url).then(async (res) => {
     const entries = await res.json()
+    totalScores = Number(res.headers.get('content-range')?.split('/').pop())
+    console.log(totalScores)
     return entries
   })
 

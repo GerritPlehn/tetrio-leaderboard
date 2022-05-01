@@ -1,35 +1,15 @@
-.container {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: space-around;
-}
-
-.header {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: space-around;
-}
-
 .main {
-  display: flex;
-  flex-flow: row;
+  padding: '12px 12px';
+}
+.row {
+  display: 'flex';
+  flex-flow: 'row';
+  flex-wrap: 'wrap';
 }
 
-.leaderboard {
-  flex: 1 200px;
-  padding-right: 50px;
-}
-
-.replayDetail {
-  flex: 2 400px;
-}
-
-.scoreSubmission {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: space-around;
-  padding-top: 40px;
+.block {
+  background: 'white';
+  margin: '12px 0 0 12px';
+  padding: '12px';
+  flex: '350px';
 }
