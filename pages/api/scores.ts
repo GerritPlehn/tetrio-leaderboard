@@ -8,9 +8,16 @@ type Data = {
 
 const baseUrl = 'https://dfvqarmcqpkvgykzcglz.supabase.co/rest/v1/scores'
 
+const competitionStart = new Date(
+  process.env.COMP_START_DATE || '2022-09-01T00:00:00.000Z'
+)
+const competitionEnd = new Date(
+  process.env.COMP_END_DATE || '2022-10-01T00:00:00.000Z'
+)
+
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data | unknown>
 ) {
   const requestInit: RequestInit = {
     headers: {
@@ -33,6 +40,14 @@ export default async function handler(
     const body = (await response.json())[0]
     return res.setHeader('Location', `/score/${body.id}`).status(201).json(body)
   } else if (req.method === 'GET') {
+    if (new Date() < competitionEnd) {
+      return res
+        .status(401)
+        .json({
+          message: `Scores available after competition ends at ${competitionEnd.toISOString()} in order not to discourage anybody from playing 😊`,
+        })
+    }
+
     let page = 0 || Number(req.query['page'])
     const pageSize = 10
 

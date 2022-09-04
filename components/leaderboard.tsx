@@ -4,7 +4,7 @@ import LeaderboardEntry from '../types/leaderboardEntry'
 import Score from '../types/score'
 import { Replay } from '../types/replay'
 
-import { Table, TablePaginationConfig } from 'antd'
+import { Table, TablePaginationConfig, Alert } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
 
 let pageSize = 10
@@ -20,8 +20,20 @@ function Page({
   setPageIndex: React.Dispatch<React.SetStateAction<number>>
   replayInfoExchanger: (replayDetail: Replay) => void
 }): JSX.Element {
-  let { data, error } = useSWR(`/api/scores?page=${pageIndex}`, entryFetcher)
-
+  let { data, error } = useSWR<LeaderboardEntry[], Error>(
+    `/api/scores?page=${pageIndex}`,
+    entryFetcher
+  )
+  if (error) {
+    return (
+      <Alert
+        message="Error loading Leaderboard"
+        description={error?.message}
+        type="error"
+        showIcon
+      />
+    )
+  }
   const columns: ColumnsType<LeaderboardEntry> = [
     {
       title: 'Rank',
@@ -107,8 +119,13 @@ export default function Leaderboard({
 const entryFetcher: Fetcher<LeaderboardEntry[], string> = (url) =>
   fetch(url).then(async (res) => {
     const entries = await res.json()
+    if (!res.ok) {
+      const error = new Error(
+        entries?.message || 'Error while fetching leaderboard data.'
+      )
+      throw error
+    }
     totalScores = Number(res.headers.get('content-range')?.split('/').pop())
-    console.log(totalScores)
     return entries
   })
 
