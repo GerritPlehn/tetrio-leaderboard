@@ -3,11 +3,17 @@ import { UserOutlined, InboxOutlined } from '@ant-design/icons'
 import { FormEvent } from 'react'
 import { Replay } from '../types/replay'
 import { DraggerProps } from 'antd/lib/upload'
+import type { ValidationResult } from '../types/validationResult'
+import { validateReplay } from '../lib/validateScore'
+import ValidationNotice from './validationNotice'
 const { Dragger } = Upload
 
 let uploadReplay: Replay
+let validationResult: ValidationResult
+
 const setUploadScore = (replay: Replay) => {
   uploadReplay = replay
+  validationResult = validateReplay(replay)
 }
 const getUploadScore = () => {
   return uploadReplay
@@ -93,7 +99,8 @@ export default function ScoreSubmission({
             Click or drag file to this area to upload
           </p>
         </Dragger>
-        <Button type="primary" size="large" htmlType="submit">
+        <ValidationNotice validationResult={validationResult}></ValidationNotice>
+        <Button type="primary" size="large" htmlType="submit" disabled={!validationResult?.valid}>
           Submit Score
         </Button>
       </form>
