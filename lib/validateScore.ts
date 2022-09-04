@@ -20,9 +20,9 @@ export const validateReplay = (replay: unknown): ValidationResult => {
   }
   let i = 0
   while (validationResult.valid && i < competitionRules.length) {
-    validationResult.valid = competitionRules[i].validate(score)
-    if (!validationResult.valid)
-      validationResult.message = `Failed to validate rule '${competitionRules[i].name}'`
+    const ruleResult = competitionRules[i].validate(score)
+    validationResult.valid = ruleResult.valid
+    if (!validationResult.valid) validationResult.message = ruleResult.message
     i++
   }
   return validationResult
@@ -30,23 +30,28 @@ export const validateReplay = (replay: unknown): ValidationResult => {
 
 type Rule = {
   name: string
-  validate: (replay: Replay) => boolean
+  validate: (replay: Replay) => { valid: boolean; message: string | null }
 }
 
 const competitionRules: Rule[] = [
   {
     name: 'gameMode',
-    validate: (replay: Replay) =>
-      replay.gametype === 'blitz' && replay.endcontext.gametype === 'blitz',
+    validate: (replay: Replay) => {
+      const message = 'The score was not set on the correct game mode.'
+      const valid =
+        replay.gametype === 'blitz' && replay.endcontext.gametype === 'blitz'
+      return { valid, message: valid ? null : message }
+    },
   },
   {
     name: 'timeRange',
     validate: (replay: Replay) => {
       const timestamp = new Date(replay.ts)
-      return (
+      const message = 'The score was not within the competition time-frame.'
+      const valid =
         timestamp > new Date('2022-09-01T00:00:00.000Z') &&
         timestamp < new Date('2022-10-01T00:00:00.000Z')
-      )
+      return { valid, message: valid ? null : message }
     },
   },
 ]
