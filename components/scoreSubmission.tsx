@@ -1,12 +1,12 @@
 import { Input, Button, Upload, message } from 'antd'
 import { UserOutlined, InboxOutlined } from '@ant-design/icons'
-import { FormEvent, useState } from 'react'
+import { FormEvent } from 'react'
 import { Replay } from '../types/replay'
 import { DraggerProps } from 'antd/lib/upload'
 const { Dragger } = Upload
 
-let uploadReplay: Replay.RootObject
-const setUploadScore = (replay: Replay.RootObject) => {
+let uploadReplay: Replay
+const setUploadScore = (replay: Replay) => {
   uploadReplay = replay
 }
 const getUploadScore = () => {
@@ -16,7 +16,7 @@ const getUploadScore = () => {
 export default function ScoreSubmission({
   replayInfoExchanger,
 }: {
-  replayInfoExchanger: (replayDetail: Replay.RootObject) => void
+  replayInfoExchanger: (replayDetail: Replay) => void
 }) {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

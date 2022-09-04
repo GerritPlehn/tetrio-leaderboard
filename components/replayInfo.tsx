@@ -1,7 +1,7 @@
 import { Descriptions } from 'antd'
 import { Replay } from '../types/replay'
 
-export default function ReplayInfo({ replay }: { replay: Replay.RootObject }) {
+export default function ReplayInfo({ replay }: { replay: Replay }) {
   return (
     <div>
       <h2>Score Details</h2>

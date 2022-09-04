@@ -18,7 +18,7 @@ function Page({
 }: {
   pageIndex: number
   setPageIndex: React.Dispatch<React.SetStateAction<number>>
-  replayInfoExchanger: (replayDetail: Replay.RootObject) => void
+  replayInfoExchanger: (replayDetail: Replay) => void
 }): JSX.Element {
   let { data, error } = useSWR(`/api/scores?page=${pageIndex}`, entryFetcher)
 
@@ -29,7 +29,7 @@ function Page({
       render: (value, record, index) => {
         return pageIndex * pageSize + index + 1
       },
-      width: 64
+      width: 64,
     },
     {
       title: 'Name',
@@ -39,12 +39,12 @@ function Page({
     {
       title: 'Level',
       dataIndex: 'level',
-      width: 64
+      width: 64,
     },
     {
       title: 'Score',
       dataIndex: 'score',
-      width: 128
+      width: 128,
     },
   ]
   const pagination: TablePaginationConfig = {
@@ -72,7 +72,7 @@ function Page({
                 `/api/scores/${data.id.toString()}`
               )
               replayInfoExchanger(score.replay)
-            }
+            },
           }
         }}
       ></Table>
@@ -83,7 +83,7 @@ function Page({
 export default function Leaderboard({
   replayInfoExchanger,
 }: {
-  replayInfoExchanger: (replayDetail: Replay.RootObject) => void
+  replayInfoExchanger: (replayDetail: Replay) => void
 }) {
   const [pageIndex, setPageIndex] = useState(0)
   return (

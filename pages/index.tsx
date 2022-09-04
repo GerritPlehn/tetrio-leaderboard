@@ -11,10 +11,8 @@ import Rules from '../components/rules'
 const { Content, Header } = Layout
 
 const Home: NextPage = () => {
-  const [replayDetail, setReplayDetail] = useState<
-    Replay.RootObject | undefined
-  >()
-  const replayInfoExchanger = (replayDetail: Replay.RootObject) => {
+  const [replayDetail, setReplayDetail] = useState<Replay | undefined>()
+  const replayInfoExchanger = (replayDetail: Replay) => {
     setReplayDetail(replayDetail)
   }
   return (

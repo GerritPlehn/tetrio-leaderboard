@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { validateReplay } from '../../lib/validateScore'
 
 type Data = {
   data: string
@@ -19,6 +20,10 @@ export default async function handler(
     },
   }
   if (req.method === 'POST') {
+    const validationResult = validateReplay(req.body?.replay)
+    if (!validationResult.valid) {
+      return res.status(400).send({ data: validationResult.message as string })
+    }
     requestInit.method = 'POST'
     requestInit.body = JSON.stringify(req.body)
     const response = await fetch(
