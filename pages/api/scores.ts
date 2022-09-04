@@ -44,7 +44,7 @@ export default async function handler(
       return res
         .status(401)
         .json({
-          message: `Scores available after competition ends at ${competitionEnd.toISOString()} in order not to discourage anybody from playing 😊`,
+          message: `Leaderboard available after competition ends at ${competitionEnd.toISOString()}. Try to keep improving your score up until then 😊`,
         })
     }
 
