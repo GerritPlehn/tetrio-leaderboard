@@ -48,9 +48,8 @@ const competitionRules: Rule[] = [
     validate: (replay: Replay) => {
       const timestamp = new Date(replay.ts)
       const message = 'The score was not within the competition time-frame.'
-      const valid =
-        timestamp > new Date('2022-09-01T00:00:00.000Z') &&
-        timestamp < new Date('2022-10-01T00:00:00.000Z')
+      const valid = timestamp > new Date('2022-09-01T00:00:00.000Z')
+      // && timestamp < new Date('2022-10-01T00:00:00.000Z')
       return { valid, message: valid ? null : message }
     },
   },
