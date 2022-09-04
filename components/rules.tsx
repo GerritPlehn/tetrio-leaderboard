@@ -12,7 +12,7 @@ export default function Rules() {
       <p>Click &quot;JOIN&quot;. You don&apos;t need to register, but can if you want.</p>
       <p>Select &quot;SOLO&quot;, followed by &quot;BLITZ&quot; and &quot;START&quot;</p>
       <p>You can move the piece with the arrow keys and spin them with Z and X</p>
-      <p>After you finish the round, click the download button and upload the replay file in the provided form.</p>
+      <p>After you finish a game you&apos;re happy with, click the download button and upload the replay file in the provided form.</p>
       <p>Have fun, good luck!</p>
     </div>
   )
