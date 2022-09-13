@@ -1,7 +1,8 @@
-import { Input, Button, Upload, message } from 'antd'
+import { Input, Button, Upload, message, Form, notification } from 'antd'
 import { UserOutlined, InboxOutlined } from '@ant-design/icons'
-import { FormEvent } from 'react'
-import { Replay } from '../types/replay'
+import type { FormInstance } from 'antd/es/form'
+import type { Replay } from '../types/replay'
+import React from 'react'
 import { DraggerProps } from 'antd/lib/upload'
 import type { ValidationResult } from '../types/validationResult'
 import { validateReplay } from '../lib/validateScore'
@@ -19,23 +20,16 @@ const getUploadScore = () => {
   return uploadReplay
 }
 
-export default function ScoreSubmission({
-  replayInfoExchanger,
-}: {
-  replayInfoExchanger: (replayDetail: Replay) => void
-}) {
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      replay: { value: string }
-    }
-    const data = {
-      name: target.name.value,
-      replay: getUploadScore(),
-    }
+class ScoreSubmission extends React.Component {
+  formRef = React.createRef<FormInstance>()
 
-    const JSONdata = JSON.stringify(data)
+  onFinish = async (data: { name: string; file: Object }) => {
+    console.log(data)
+
+    const JSONdata = JSON.stringify({
+      name: data.name,
+      replay: getUploadScore(),
+    })
     const endpoint = '/api/scores'
     const options = {
       method: 'POST',
@@ -45,10 +39,31 @@ export default function ScoreSubmission({
       body: JSONdata,
     }
 
-    const response = await fetch(endpoint, options)
-    // await response.json()
+    try {
+      const response = await fetch(endpoint, options)
+      const body = await response.json()
+      if (!response.ok) {
+        throw new Error(body?.data || 'Error uploading score')
+      }
+      notification.open({
+        message: 'Score uploaded',
+        description: 'Score was successfully uploaded! Thanks for participating!'
+      })
+      this.formRef.current?.resetFields()
+    } catch (error) {
+      console.error('submit fail', error)
+      notification.open({
+        message: 'Submission failed',
+        description: 'There was an issue while submitting your score. Please send the replay file to Gerrit!'
+      })
+    }
   }
-  const props: DraggerProps = {
+
+  onReset = () => {
+    this.formRef.current!.resetFields()
+  }
+
+  draggerProps: DraggerProps = {
     name: 'file',
     multiple: false,
     maxCount: 1,
@@ -59,7 +74,7 @@ export default function ScoreSubmission({
         const jsonString = e.target?.result?.toString()
         const score = jsonString ? JSON.parse(jsonString) : undefined
         setUploadScore(score)
-        replayInfoExchanger(uploadReplay)
+        this.props.replayInfoExchanger(uploadReplay)
         console.log(score)
       }
       return false
@@ -79,36 +94,56 @@ export default function ScoreSubmission({
       console.log('Dropped files', e.dataTransfer.files)
     },
   }
-  return (
-    <div>
-      <h2>Submit your own score</h2>
-      <form onSubmit={handleSubmit}>
-        <Input
-          placeholder="Name"
-          prefix={<UserOutlined />}
-          name="name"
-          id="name"
-          addonAfter="@storyblok.com"
-          required
-        />
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-        </Dragger>
-        <ValidationNotice validationResult={validationResult}></ValidationNotice>
-        <Button type="primary" size="large" htmlType="submit" disabled={!validationResult?.valid}>
-          Submit Score
-        </Button>
-      </form>
-    </div>
-  )
+
+  constructor(props: { replayInfoExchanger: (replayDetail: Replay) => void }) {
+    super(props)
+  }
+
+  render(): React.ReactNode {
+    return (
+      <div>
+        <h2>Submit your own score</h2>
+        <Form ref={this.formRef} name="control-ref" onFinish={this.onFinish}>
+          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+            <Input
+              placeholder="Name"
+              prefix={<UserOutlined />}
+              addonAfter="@storyblok.com"
+              required
+            />
+          </Form.Item>
+          <Form.Item name="file" label="Replay" rules={[{ required: true }]}>
+            <Dragger {...this.draggerProps}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+            </Dragger>
+          </Form.Item>
+          <ValidationNotice
+            validationResult={validationResult}
+          ></ValidationNotice>
+          <Form.Item>
+            <Button
+              type="primary"
+              size="large"
+              htmlType="submit"
+              disabled={!validationResult?.valid}
+            >
+              Submit Score
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    )
+  }
 }
 
 interface ScoreSubmission {
   name: string
   replay: string
 }
+
+export default ScoreSubmission
