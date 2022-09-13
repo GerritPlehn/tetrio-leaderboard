@@ -19,7 +19,7 @@ export const schema = {
     data: {
       properties: {
         frames: {
-          type: 'uint32',
+          type: 'float64',
         },
       },
       additionalProperties: true,
@@ -27,56 +27,56 @@ export const schema = {
     endcontext: {
       properties: {
         btb: {
-          type: 'uint32',
+          type: 'float64',
         },
         clears: {
           properties: {
             allclear: {
-              type: 'uint32',
+              type: 'float64',
             },
             doubles: {
-              type: 'uint32',
+              type: 'float64',
             },
             minitspindoubles: {
-              type: 'uint32',
+              type: 'float64',
             },
             minitspins: {
-              type: 'uint32',
+              type: 'float64',
             },
             minitspinsingles: {
-              type: 'uint32',
+              type: 'float64',
             },
             quads: {
-              type: 'uint32',
+              type: 'float64',
             },
             realtspins: {
-              type: 'uint32',
+              type: 'float64',
             },
             singles: {
-              type: 'uint32',
+              type: 'float64',
             },
             triples: {
-              type: 'uint32',
+              type: 'float64',
             },
             tspindoubles: {
-              type: 'uint32',
+              type: 'float64',
             },
             tspinquads: {
-              type: 'uint32',
+              type: 'float64',
             },
             tspinsingles: {
-              type: 'uint32',
+              type: 'float64',
             },
             tspintriples: {
-              type: 'uint32',
+              type: 'float64',
             },
           },
         },
         combo: {
-          type: 'uint32',
+          type: 'float64',
         },
         currentcombopower: {
-          type: 'uint32',
+          type: 'float64',
           nullable: true
         },
         finalTime: {
@@ -85,13 +85,13 @@ export const schema = {
         finesse: {
           properties: {
             combo: {
-              type: 'uint32',
+              type: 'float64',
             },
             faults: {
-              type: 'uint32',
+              type: 'float64',
             },
             perfectpieces: {
-              type: 'uint32',
+              type: 'float64',
             },
           },
         },
@@ -101,62 +101,62 @@ export const schema = {
         garbage: {
           properties: {
             attack: {
-              type: 'uint32',
+              type: 'float64',
             },
             cleared: {
-              type: 'uint32',
+              type: 'float64',
             },
             received: {
-              type: 'uint32',
+              type: 'float64',
             },
             sent: {
-              type: 'uint32',
+              type: 'float64',
             },
           },
         },
         holds: {
-          type: 'uint32',
+          type: 'float64',
         },
         inputs: {
-          type: 'uint32',
+          type: 'float64',
         },
         kills: {
-          type: 'uint32',
+          type: 'float64',
         },
         level: {
-          type: 'uint32',
+          type: 'float64',
         },
         level_lines: {
-          type: 'uint32',
+          type: 'float64',
         },
         level_lines_needed: {
-          type: 'uint32',
+          type: 'float64',
         },
         lines: {
-          type: 'uint32',
+          type: 'float64',
         },
         piecesplaced: {
-          type: 'uint32',
+          type: 'float64',
         },
         score: {
-          type: 'uint32',
+          type: 'float64',
         },
         seed: {
-          type: 'uint32',
+          type: 'float64',
         },
         time: {
           properties: {
             frameoffset: {
-              type: 'uint32',
+              type: 'float64',
             },
             locked: {
               type: 'boolean',
             },
             prev: {
-              type: 'uint32',
+              type: 'float64',
             },
             start: {
-              type: 'uint32',
+              type: 'float64',
             },
             zero: {
               type: 'boolean',
@@ -164,19 +164,19 @@ export const schema = {
           },
         },
         topbtb: {
-          type: 'uint32',
+          type: 'float64',
         },
         topcombo: {
-          type: 'uint32',
+          type: 'float64',
         },
         tspins: {
-          type: 'uint32',
+          type: 'float64',
         },
         zenlevel: {
-          type: 'uint32',
+          type: 'float64',
         },
         zenprogress: {
-          type: 'uint32',
+          type: 'float64',
         },
       },
     },
