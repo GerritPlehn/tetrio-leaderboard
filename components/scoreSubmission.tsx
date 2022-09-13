@@ -20,7 +20,7 @@ const getUploadScore = () => {
   return uploadReplay
 }
 
-class ScoreSubmission extends React.Component {
+class ScoreSubmission extends React.Component< {replayInfoExchanger: (replayDetail: Replay) => void }, {}> {
   formRef = React.createRef<FormInstance>()
 
   onFinish = async (data: { name: string; file: Object }) => {
