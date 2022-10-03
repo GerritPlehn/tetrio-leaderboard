@@ -71,9 +71,9 @@ const Home: NextPage = () => {
         </Header>
         <Content style={styles.main}>
           <div style={styles.row}>
-            {/* <div style={styles.block}>
+            <div style={styles.block}>
               <Leaderboard replayInfoExchanger={replayInfoExchanger} />
-            </div> */}
+            </div> 
             {replayDetail && (
               <div style={styles.block}>
                 <ReplayInfo replay={replayDetail} />

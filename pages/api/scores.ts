@@ -6,7 +6,7 @@ type Data = {
   data: string
 }
 
-const baseUrl = 'https://dfvqarmcqpkvgykzcglz.supabase.co/rest/v1/scores'
+const baseUrl = 'https://dfvqarmcqpkvgykzcglz.supabase.co/rest/v1'
 
 const competitionStart = new Date(
   process.env.COMP_START_DATE || '2022-09-01T00:00:00.000Z'
@@ -34,7 +34,7 @@ export default async function handler(
     requestInit.method = 'POST'
     requestInit.body = JSON.stringify(req.body)
     const response = await fetch(
-      `${baseUrl}?select=id,name,replay->endcontext->score,replay->endcontext->level`,
+      `${baseUrl}/scores?select=id,name,replay->endcontext->score,replay->endcontext->level`,
       requestInit
     )
     const body = (await response.json())[0]
@@ -52,7 +52,7 @@ export default async function handler(
     const pageSize = 10
 
     const response = await fetch(
-      `${baseUrl}?select=id,name,replay->endcontext->score,replay->endcontext->level&order=replay->endcontext->score.desc&offset=${
+      `${baseUrl}/leaderboard?select=id,name,replay->endcontext->score,replay->endcontext->level&order=replay->endcontext->score.desc&offset=${
         page * pageSize
       }&limit=10`,
       requestInit
