@@ -4,11 +4,11 @@ import { authOptions } from "@/server/auth";
 import { getCurrentUser } from "@/lib/session";
 import { EmptyPlaceholder } from "@/components/empty-placeholder";
 import { DashboardHeader } from "@/components/header";
-import { PostCreateButton } from "@/components/post-create-button";
 import { PostItem } from "@/components/post-item";
 import { DashboardShell } from "@/components/shell";
 import { api } from "@/trpc/server";
 import { type Post } from "@/server/api/routers/post";
+import { ScoreSubmitButton } from "@/components/score-submit-button";
 
 export const metadata = {
   title: "Dashboard",
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   return (
     <DashboardShell>
       <DashboardHeader heading="Posts" text="Create and manage posts.">
-        <PostCreateButton />
+        <ScoreSubmitButton />
       </DashboardHeader>
       <div>
         {posts?.length ? (
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
             <EmptyPlaceholder.Description>
               You don&apos;t have any posts yet. Start creating content.
             </EmptyPlaceholder.Description>
-            <PostCreateButton variant="outline" />
+            <ScoreSubmitButton />
           </EmptyPlaceholder>
         )}
       </div>
