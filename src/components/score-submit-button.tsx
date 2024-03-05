@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type TetrioReplay, tetrioReplaySchema } from "types/tetrio-replay";
+import { api } from "@/trpc/react";
+import { Icons } from "./icons";
 
 export function ScoreSubmitButton() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
   const [replay, setReplay] = React.useState<TetrioReplay | null>(null);
+  const score = api.score.create.useMutation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,15 +52,16 @@ export function ScoreSubmitButton() {
     reader.readAsText(file);
   };
 
-  function onSubmit() {
+  async function onSubmit() {
+    setIsLoading(true);
+    if (!replay) return;
+    await score.mutateAsync(replay);
     toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{replay?.endcontext.score}</code>
-        </pre>
-      ),
+      title: "Score Submitted",
+      description: "Your score was submitted.",
     });
+    setIsLoading(false);
+    router.refresh();
   }
 
   return (
@@ -82,8 +90,16 @@ export function ScoreSubmitButton() {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" disabled={!replay} onClick={onSubmit}>
-            Submit
+          <Button
+            type="submit"
+            disabled={!replay || isLoading}
+            onClick={onSubmit}
+          >
+            {isLoading ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Submit"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

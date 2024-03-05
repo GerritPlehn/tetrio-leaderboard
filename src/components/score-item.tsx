@@ -2,35 +2,33 @@ import Link from "next/link";
 
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PostOperations } from "@/components/post-operations";
-import { type Post } from "@/server/api/routers/post";
+import { type Score } from "types/score";
 
-interface PostItemProps {
-  post: Pick<Post, "id" | "title" | "published" | "createdAt">;
+interface ScoreItemProps {
+  score: Pick<Score, "id" | "played_at" | "score">;
 }
 
-export function PostItem({ post }: PostItemProps) {
+export function ScoreItem({ score }: ScoreItemProps) {
   return (
     <div className="flex items-center justify-between p-4">
       <div className="grid gap-1">
         <Link
-          href={`/editor/${post.id}`}
+          href={`/editor/${score.id}`}
           className="font-semibold hover:underline"
         >
-          {post.title}
+          {Intl.NumberFormat().format(score.score)}
         </Link>
         <div>
           <p className="text-sm text-muted-foreground">
-            {formatDate(post.createdAt?.toDateString())}
+            {formatDate(score.played_at?.toDateString())}
           </p>
         </div>
       </div>
-      <PostOperations post={{ id: post.id, title: post.title }} />
     </div>
   );
 }
 
-PostItem.Skeleton = function PostItemSkeleton() {
+ScoreItem.Skeleton = function ScoreItemSkeleton() {
   return (
     <div className="p-4">
       <div className="space-y-3">

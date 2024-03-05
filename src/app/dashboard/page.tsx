@@ -4,10 +4,9 @@ import { authOptions } from "@/server/auth";
 import { getCurrentUser } from "@/lib/session";
 import { EmptyPlaceholder } from "@/components/empty-placeholder";
 import { DashboardHeader } from "@/components/header";
-import { PostItem } from "@/components/post-item";
+import { ScoreItem } from "@/components/score-item";
 import { DashboardShell } from "@/components/shell";
 import { api } from "@/trpc/server";
-import { type Post } from "@/server/api/routers/post";
 import { ScoreSubmitButton } from "@/components/score-submit-button";
 
 export const metadata = {
@@ -21,18 +20,18 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn ?? "/login");
   }
 
-  const posts: Post[] = await api.post.getSome.query();
+  const scores = await api.score.getPersonal.query();
 
   return (
     <DashboardShell>
-      <DashboardHeader heading="Posts" text="Create and manage posts.">
+      <DashboardHeader heading="Scores" text="Submit and manage scores.">
         <ScoreSubmitButton />
       </DashboardHeader>
       <div>
-        {posts?.length ? (
-          <div className="divide-border divide-y rounded-md border">
-            {posts.map((post) => (
-              <PostItem key={post.id} post={post} />
+        {scores?.length ? (
+          <div className="divide-y divide-border rounded-md border">
+            {scores.map((score) => (
+              <ScoreItem key={score.id} score={score} />
             ))}
           </div>
         ) : (

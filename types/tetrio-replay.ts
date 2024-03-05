@@ -8,6 +8,7 @@ export const tetrioReplaySchema = z
         score: z.number(),
         level: z.number(),
         piecesplaced: z.number(),
+        seed: z.number(),
         finesse: z
           .object({
             combo: z.number(),
