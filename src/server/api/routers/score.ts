@@ -1,4 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { tetrioReplaySchema } from "types/tetrio-replay";
 import { type Score, scoreSchema } from "types/score";
@@ -39,21 +43,56 @@ export const scoreRouter = createTRPCRouter({
     if (!player) {
       throw new Error("No player given");
     }
-    const scores = await db
+    const query = await db
       .from("score")
       .select("id,player,score,played_at,submitted_at")
       .eq("player", player);
-    console.log("foooo", scores);
-    return scoreSchema.omit({ replay: true }).array().parse(scores.data);
+    return scoreSchema.omit({ replay: true }).array().parse(query.data);
   }),
 
   getHighscores: protectedProcedure.query(async () => {
-    const scores = await db
+    const query = await db
       .from("score")
       .select("id,player,score,played_at,submitted_at")
       .order("score", { ascending: false })
       .limit(10);
-    console.log(scores);
-    return scoreSchema.omit({ replay: true }).array().parse(scores.data);
+    return scoreSchema.omit({ replay: true }).array().parse(query.data);
+  }),
+
+  getAnonymousHighscores: publicProcedure.query(async () => {
+    const query = await db
+      .from("score")
+      .select("id,player,score,played_at,submitted_at")
+      .order("score", { ascending: false })
+      .limit(10);
+
+    const scores = scoreSchema.omit({ replay: true }).array().parse(query.data);
+
+    const pseudoScores = scores.map((score, index) => {
+      return {
+        ...score,
+        player: `Anonymous ${animalNames[index % animalNames.length]}`,
+      };
+    });
+    return pseudoScores;
   }),
 });
+
+const animalNames = [
+  "Weasel",
+  "Meerkat",
+  "Snail",
+  "Squirrel",
+  "Raccoon",
+  "Penguin",
+  "Tiger",
+  "Elephant",
+  "Panda",
+  "Kangaroo",
+  "Lion",
+  "Giraffe",
+  "Hippo",
+  "Rhino",
+  "Zebra",
+  "Gorilla",
+] as const;
