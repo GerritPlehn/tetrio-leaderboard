@@ -31,11 +31,11 @@ export async function Leaderboard() {
       </TableHeader>
       <TableBody>
         {scores.map((score, index) => {
-          const ownScore = user?.email === score.player;
+          const ownScore = user?.email === score.player_id;
           return (
             <TableRow key={score.id} className={ownScore ? "bg-accent" : ""}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell className="font-medium">{score.player}</TableCell>
+              <TableCell className="font-medium">{score.player_name}</TableCell>
               <TableCell>
                 {Intl.DateTimeFormat().format(score.played_at)}
               </TableCell>

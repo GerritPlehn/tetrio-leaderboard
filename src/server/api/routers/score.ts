@@ -14,14 +14,16 @@ export const scoreRouter = createTRPCRouter({
       const replay = input;
 
       const session = ctx.session;
-      const player = session?.user.email;
-      if (!player) {
+      const playerId = session?.user.email;
+      const playerName = session?.user.name;
+      if (!playerId) {
         throw new Error("No player given");
       }
 
       const score: Score = {
         id: replay.endcontext.seed.toString(),
-        player,
+        player_id: playerId,
+        player_name: playerName ?? playerId,
         replay,
         score: replay.endcontext.score,
         played_at: replay.ts,
@@ -31,7 +33,8 @@ export const scoreRouter = createTRPCRouter({
       const insertQuery = await db.from("score").insert(score);
 
       if (insertQuery.error) {
-        throw new Error(insertQuery.error.message);
+        console.error(insertQuery.error);
+        throw insertQuery.error;
       }
 
       return score;
@@ -39,21 +42,22 @@ export const scoreRouter = createTRPCRouter({
 
   getPersonal: protectedProcedure.query(async ({ ctx }) => {
     const session = ctx.session;
-    const player = session?.user.email;
-    if (!player) {
+    const playerId = session?.user.email;
+    if (!playerId) {
       throw new Error("No player given");
     }
     const query = await db
       .from("score")
-      .select("id,player,score,played_at,submitted_at")
-      .eq("player", player);
+      .select("id,player_id,player_name,score,played_at,submitted_at")
+      .eq("player_id", playerId)
+      .order("played_at", { ascending: false });
     return scoreSchema.omit({ replay: true }).array().parse(query.data);
   }),
 
   getHighscores: protectedProcedure.query(async () => {
     const query = await db
-      .from("score")
-      .select("id,player,score,played_at,submitted_at")
+      .from("highscores")
+      .select("id,player_id,player_name,score,played_at,submitted_at")
       .order("score", { ascending: false })
       .limit(10);
     return scoreSchema.omit({ replay: true }).array().parse(query.data);
@@ -61,17 +65,19 @@ export const scoreRouter = createTRPCRouter({
 
   getAnonymousHighscores: publicProcedure.query(async () => {
     const query = await db
-      .from("score")
-      .select("id,player,score,played_at,submitted_at")
+      .from("highscores")
+      .select("id,player_id,player_name,score,played_at,submitted_at")
       .order("score", { ascending: false })
       .limit(10);
 
     const scores = scoreSchema.omit({ replay: true }).array().parse(query.data);
 
     const pseudoScores = scores.map((score, index) => {
+      const pseudonym = `Anonymous ${animalNames[index % animalNames.length]}`;
       return {
         ...score,
-        player: `Anonymous ${animalNames[index % animalNames.length]}`,
+        player_name: pseudonym,
+        player_id: pseudonym,
       };
     });
     return pseudoScores;

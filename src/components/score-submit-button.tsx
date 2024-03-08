@@ -21,7 +21,7 @@ import { Icons } from "./icons";
 
 export function ScoreSubmitButton() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [replay, setReplay] = React.useState<TetrioReplay | null>(null);
   const score = api.score.create.useMutation();
@@ -53,15 +53,20 @@ export function ScoreSubmitButton() {
   };
 
   async function onSubmit() {
-    setIsLoading(true);
     if (!replay) return;
-    await score.mutateAsync(replay);
-    toast({
-      title: "Score Submitted",
-      description: "Your score was submitted.",
-    });
+    setIsLoading(true);
+    try {
+      await score.mutateAsync(replay);
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: "Error Submitting Score",
+        variant: "destructive",
+        description:
+          "An error occurred while submitting your score. If this issue persists, please contact Gerrit.",
+      });
+    }
     setIsLoading(false);
-    router.refresh();
   }
 
   return (
@@ -84,6 +89,7 @@ export function ScoreSubmitButton() {
             <Input
               id="replay"
               type="file"
+              accept=".ttr"
               onChange={handleFileChange}
               className="col-span-3"
             />
