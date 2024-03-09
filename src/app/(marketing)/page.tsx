@@ -5,8 +5,8 @@ import Rules from "@/components/rules";
 import Participating from "@/components/participating";
 
 export const metadata = {
-  title: "Leaderboard | SB Tetrio",
-  description: "The best scores submitted yet. Get in on the action!",
+  title: "Home",
+  description: "Storyblok Tetris Challenge Leaderboard",
 };
 
 export default async function BillingPage() {

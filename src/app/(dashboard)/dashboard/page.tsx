@@ -10,7 +10,8 @@ import { api } from "@/trpc/server";
 import { ScoreSubmitButton } from "@/components/score-submit-button";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Scores",
+  description: "Submit and manage scores.",
 };
 
 export default async function DashboardPage() {
