@@ -38,12 +38,14 @@ export const metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    image: siteConfig.ogImage,
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    images: [`${siteConfig.url}/og.png`],
+    images: [siteConfig.ogImage],
+    image: siteConfig.ogImage,
   },
   icons: {
     icon: "/favicon.ico",
