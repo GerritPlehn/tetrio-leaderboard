@@ -4,9 +4,9 @@ export const siteConfig: SiteConfig = {
   name: "SB Tetrio",
   description: "A Tetrio leaderboard site for the Storyblok Tetrio challenge.",
   url: "https://gerritplehn.com",
-  ogImage: "https://tx.shadcn.com/og.jpg",
+  ogImage: "https://tetris.gerritplehn.com/og.jpg",
   links: {
-    twitter: "https://twitter.com/shadcn",
+    twitter: "",
     github: "https://github.com/gerritplehn/tetrio-leaderboard",
   },
 };
