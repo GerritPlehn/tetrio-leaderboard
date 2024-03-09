@@ -7,13 +7,14 @@ import { Toaster } from "@/components/ui/toaster";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { siteConfig } from "@/config/site";
+import { type Metadata } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
@@ -38,14 +39,13 @@ export const metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
-    image: siteConfig.ogImage,
+    images: [{ url: siteConfig.ogImage }],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    image: siteConfig.ogImage,
   },
   icons: {
     icon: "/favicon.ico",
