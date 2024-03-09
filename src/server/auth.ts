@@ -45,6 +45,14 @@ export const authOptions: NextAuthOptions = {
         id: token.sub,
       },
     }),
+    signIn: ({ user }) => {
+      const isAllowedDomain = !!user.email?.endsWith(env.ALLOWED_DOMAIN);
+      const isAllowListed =
+        user.email && env.ALLOWED_EMAILS
+          ? env.ALLOWED_EMAILS.includes(user.email)
+          : false;
+      return isAllowedDomain || isAllowListed;
+    },
   },
   providers: [
     GoogleProvider({

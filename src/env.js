@@ -25,6 +25,11 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     SUPABASE_URL: z.string(),
     SUPABASE_KEY: z.string(),
+    ALLOWED_DOMAIN: z.string().default("@storyblok.com"),
+    ALLOWED_EMAILS: z
+      .string()
+      .optional()
+      .transform((val) => val?.split(",")),
   },
 
   /**
@@ -48,6 +53,8 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_KEY: process.env.SUPABASE_KEY,
+    ALLOWED_DOMAIN: process.env.ALLOWED_DOMAIN,
+    ALLOWED_EMAILS: process.env.ALLOWED_EMAILS,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

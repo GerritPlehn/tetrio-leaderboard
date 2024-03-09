@@ -33,7 +33,7 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="text-sm text-muted-foreground">
-            Sign in to your account
+            Sign in to your @storyblok.com account
           </p>
         </div>
         <UserAuthForm />
