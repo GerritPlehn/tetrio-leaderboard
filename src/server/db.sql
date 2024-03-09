@@ -10,6 +10,9 @@ create table
     constraint scores_pkey primary key (id)
   ) tablespace pg_default;
 
+CREATE INDEX ON "tetrio_leaderboard"."score" USING btree (score);
+CREATE INDEX ON "tetrio_leaderboard"."score" USING btree (player_id);
+
 create view
   tetrio_leaderboard.highscores as
 select distinct
